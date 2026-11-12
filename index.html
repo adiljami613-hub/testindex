@@ -1,15 +1,299 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>إدارة معمل البيجامات النسائية</title>
+<style>
+:root{--bg:#f4f6fa;--card:#fff;--ink:#172033;--muted:#667085;--line:#e4e7ec;--primary:#273c75;--accent:#e8edf9;--green:#16845b;--red:#c0392b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Tahoma,Arial,sans-serif;color:var(--ink)}
+header{background:linear-gradient(120deg,#172554,#334e8a);color:#fff;padding:24px 5%;display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap}
+header h1{margin:0 0 8px;font-size:25px}header p{margin:0;color:#e0e7ff}
+.wrap{max-width:1250px;margin:24px auto;padding:0 18px}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+nav button,.btn{border:0;border-radius:10px;padding:11px 16px;background:#e5eaf5;color:#23345f;font-weight:bold;cursor:pointer;font-family:inherit}
+nav button.active,.btn.primary{background:var(--primary);color:white}.btn.green{background:var(--green);color:white}.btn.danger{background:#fde8e7;color:var(--red)}.btn.small{padding:7px 10px;font-size:12px}
+.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}
+.card,.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 3px 12px #15294b08}
+.stat .label{color:var(--muted);font-size:13px}.stat .value{font-size:26px;font-weight:bold;margin-top:9px}.stat .hint{color:var(--muted);font-size:12px;margin-top:5px}
+.panel h2{font-size:19px;margin:0 0 16px}.panel h3{margin:0 0 12px;font-size:16px}
+.section{display:none}.section.active{display:block}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:7px}.field label{font-size:13px;color:#475467;font-weight:bold}
+input,select,textarea{width:100%;border:1px solid #d0d5dd;border-radius:9px;padding:11px 12px;background:white;font:inherit;color:var(--ink)}
+input:focus,select:focus{outline:2px solid #c7d2fe;border-color:#7c8fd1}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:15px}
+.tablewrap{overflow:auto;margin-top:15px}table{width:100%;border-collapse:collapse;min-width:650px}th,td{text-align:right;padding:12px 10px;border-bottom:1px solid var(--line);font-size:13px}th{background:#f8f9fc;color:#475467;white-space:nowrap}tbody tr:hover{background:#fafbff}
+.empty{text-align:center;color:var(--muted);padding:28px}.muted{color:var(--muted);font-size:13px}.notice{padding:12px 14px;background:#fff8e6;border:1px solid #f2dfaa;border-radius:10px;color:#785d12;font-size:13px;margin-bottom:16px}
+.pill{display:inline-block;padding:4px 8px;border-radius:20px;background:#e7f7ef;color:#16734f;font-size:12px}
+.money{font-weight:bold;white-space:nowrap}.reporttop{display:flex;gap:12px;align-items:end;flex-wrap:wrap}
+footer{text-align:center;color:var(--muted);padding:25px;font-size:12px}
+@media(max-width:850px){.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.cards,.grid{grid-template-columns:1fr}header h1{font-size:21px}.wrap{padding:0 10px}}
+@media print{header,nav,.no-print,footer{display:none!important}body{background:white}.wrap{margin:0;max-width:none;padding:0}.section{display:none!important}.section.active{display:block!important}.panel,.card{box-shadow:none;border:1px solid #ddd}.tablewrap{overflow:visible}table{min-width:0}th,td{font-size:10px;padding:6px}}
+</style>
+</head>
 <body>
-
-<h1 style="background-color:Tomato;">Tomato</h1>
-<h1 style="background-color:Orange;">Orange</h1>
-<h1 style="background-color:DodgerBlue;">DodgerBlue</h1>
-<h1 style="background-color:MediumSeaGreen;">MediumSeaGreen</h1>
-<h1 style="background-color:Gray;">Gray</h1>
-<h1 style="background-color:SlateBlue;">SlateBlue</h1>
-<h1 style="background-color:Violet;">Violet</h1>
-<h1 style="background-color:LightGray;">LightGray</h1>
-
+<header>
+ <div><h1>إدارة معمل البيجامات النسائية</h1><p>الموظفون • ساعات العمل • الأجور الشهرية</p></div>
+ <div><span class="pill">نسخة أولية تعمل على الحاسوب</span></div>
+</header>
+<div class="wrap">
+ <nav class="no-print">
+  <button class="active" data-tab="dashboard">لوحة التحكم</button>
+  <button data-tab="employees">الموظفون</button>
+  <button data-tab="hours">تسجيل ساعات العمل</button>
+  <button data-tab="advances">التسبيقات والسلف</button>
+  <button data-tab="payroll">الأجور الشهرية</button>
+ </nav>
+ <section id="dashboard" class="section active">
+  <div class="cards">
+   <div class="card stat"><div class="label">عدد الموظفين النشطين</div><div class="value" id="statEmployees">0</div><div class="hint">حسب قائمة الموظفين</div></div>
+   <div class="card stat"><div class="label">ساعات العمل هذا الشهر</div><div class="value" id="statHours">0</div><div class="hint">مجموع الساعات المسجلة</div></div>
+   <div class="card stat"><div class="label">الأجور المحسوبة هذا الشهر</div><div class="value" id="statWages">0 د.م</div><div class="hint">قبل التسبيقات والاقتطاعات</div></div>
+   <div class="card stat"><div class="label">عدد سجلات الأيام</div><div class="value" id="statRecords">0</div><div class="hint">سجلات ساعات العمل</div></div>
+  </div>
+  <div class="panel">
+   <h2>مرحبًا بك في تطبيق المعمل</h2>
+   <p>ابدأ بإضافة الموظفين وتحديد ثمن ساعة العمل الخاص بكل واحد، ثم سجّل مجموع ساعات عمله كل يوم. سيجمع التطبيق الساعات ويحسب الأجر تلقائيًا حسب الشهر المحدد.</p>
+   <div class="notice">مهم: تُحفظ البيانات على هذا الحاسوب وفي هذا المتصفح. صدّر نسخة احتياطية بانتظام، ولا تمسح بيانات المتصفح قبل حفظها.</div>
+   <div class="actions no-print"><button class="btn primary" onclick="showTab('employees')">إضافة موظف</button><button class="btn" onclick="showTab('hours')">تسجيل ساعات اليوم</button><button class="btn" onclick="showTab('payroll')">عرض الأجور</button></div>
+  </div>
+  <div class="panel" style="margin-top:16px"><h2>آخر سجلات ساعات العمل</h2><div id="recentTable"></div></div>
+ </section>
+ <section id="employees" class="section">
+  <div class="panel">
+   <h2 id="employeeFormTitle">إضافة موظف جديد</h2>
+   <input type="hidden" id="editEmployeeId">
+   <div class="grid">
+    <div class="field"><label for="empNumber">رقم الموظف الخاص * (يدوي)</label><input id="empNumber" placeholder="مثال: 001" autocomplete="off"></div>
+    <div class="field"><label for="empName">الاسم الكامل *</label><input id="empName" placeholder="مثال: محمد العلوي"></div>
+    <div class="field"><label for="empJob">المهنة / المهمة</label><input id="empJob" placeholder="مثال: خياطة، تشطيب"></div>
+    <div class="field"><label for="empPayType">طريقة الأجر *</label><select id="empPayType" onchange="toggleSalaryFields()"><option value="hourly">بالساعة</option><option value="monthly">راتب شهري ثابت</option></select></div>
+    <div class="field" id="hourlyRateWrap"><label for="empRate">ثمن ساعة العمل (درهم) *</label><input id="empRate" type="number" min="0" step="0.01" placeholder="مثال: 15"></div>
+    <div class="field" id="monthlySalaryWrap" style="display:none"><label for="empMonthlySalary">الراتب الشهري الثابت (درهم) *</label><input id="empMonthlySalary" type="number" min="0" step="0.01" placeholder="مثال: 4000"></div>
+    <div class="field"><label for="empStart">تاريخ بداية العمل</label><input id="empStart" type="date"></div>
+    <div class="field"><label for="empStatus">الحالة</label><select id="empStatus"><option value="active">نشط</option><option value="inactive">متوقف عن العمل</option></select></div>
+   </div>
+   <div class="actions"><button class="btn primary" onclick="saveEmployee()">حفظ الموظف</button><button class="btn" onclick="resetEmployeeForm()">إلغاء / موظف جديد</button></div>
+  </div>
+  <div class="panel" style="margin-top:16px"><h2>قائمة الموظفين</h2><div class="field" style="max-width:350px"><label for="employeeSearch">بحث بالاسم أو المهنة</label><input id="employeeSearch" oninput="renderEmployees()" placeholder="اكتب للبحث..."></div><div id="employeesTable" class="tablewrap"></div></div>
+ </section>
+ <section id="hours" class="section">
+  <div class="panel">
+   <h2>تسجيل ساعات العمل اليومية</h2>
+   <div class="grid">
+    <div class="field"><label for="workDate">التاريخ *</label><input type="date" id="workDate"></div>
+    <div class="field"><label for="workEmployee">الموظف *</label><select id="workEmployee"></select></div>
+    <div class="field"><label for="workHours">مجموع ساعات العمل *</label><input type="number" id="workHours" min="0" max="24" step="0.25" placeholder="مثال: 8"></div>
+    <div class="field"><label for="workNote">ملاحظة (اختياري)</label><input id="workNote" placeholder="مثال: تأخر، خروج مبكر..."></div>
+   </div>
+   <div class="actions"><button class="btn primary" onclick="saveHours()">حفظ ساعات العمل</button><button class="btn" onclick="clearHoursForm()">مسح الحقول</button></div>
+   <p class="muted">يمكن إدخال أجزاء الساعة مثل 7.5 أو 7.25. إذا كان الموظف غائبًا، سجّل 0 ساعة واكتب «غياب» في الملاحظة.</p>
+  </div>
+  <div class="panel" style="margin-top:16px">
+   <h2>سجلات العمل</h2>
+   <div class="reporttop no-print">
+    <div class="field"><label for="hoursMonth">الشهر</label><input type="month" id="hoursMonth" onchange="renderHours()"></div>
+    <div class="field"><label for="hoursEmployeeFilter">الموظف</label><select id="hoursEmployeeFilter" onchange="renderHours()"><option value="">جميع الموظفين</option></select></div>
+    <button class="btn" onclick="printSection('hours')">طباعة السجلات</button>
+   </div>
+   <div id="hoursTable" class="tablewrap"></div>
+  </div>
+ </section>
+ <section id="advances" class="section">
+  <div class="panel">
+   <h2>تسجيل التسبيقات والسلف</h2>
+   <div class="grid">
+    <div class="field"><label for="advanceDate">تاريخ تسليم المبلغ *</label><input type="date" id="advanceDate"></div>
+    <div class="field"><label for="advanceEmployee">الموظف *</label><select id="advanceEmployee"></select></div>
+    <div class="field"><label for="advanceType">نوع المبلغ *</label><select id="advanceType" onchange="toggleLoanFields()"><option value="advance">تسبيق — يخصم كاملًا في شهر تسجيله</option><option value="loan">سلفة — تُخصم على أقساط شهرية</option></select></div>
+    <div class="field"><label for="advanceAmount">المبلغ الإجمالي (درهم) *</label><input type="number" id="advanceAmount" min="0.01" step="0.01" placeholder="مثال: 500"></div>
+    <div class="field" id="installmentWrap" style="display:none"><label for="advanceInstallment">قسط الخصم الشهري (درهم) *</label><input type="number" id="advanceInstallment" min="0.01" step="0.01" placeholder="مثال: 200"></div>
+    <div class="field"><label for="advanceNote">ملاحظة (اختياري)</label><input id="advanceNote" placeholder="سبب التسبيق أو السلفة"></div>
+   </div>
+   <div class="actions"><button class="btn primary" onclick="saveAdvance()">حفظ المبلغ</button><button class="btn" onclick="clearAdvanceForm()">مسح الحقول</button></div>
+   <p class="muted">التسبيق يُخصم كاملًا من أجر شهر تسجيله. السلفة يبدأ خصم أقساطها من شهر تسجيلها، ويستمر الخصم حتى تسديد المبلغ بالكامل.</p>
+  </div>
+  <div class="panel" style="margin-top:16px"><h2>سجل التسبيقات والسلف</h2>
+   <div class="reporttop no-print"><div class="field"><label for="advanceMonthFilter">الشهر</label><input type="month" id="advanceMonthFilter" onchange="renderAdvances()"></div><div class="field"><label for="advanceEmployeeFilter">الموظف</label><select id="advanceEmployeeFilter" onchange="renderAdvances()"><option value="">جميع الموظفين</option></select></div></div>
+   <div id="advancesTable" class="tablewrap"></div>
+  </div>
+ </section>
+ <section id="payroll" class="section">
+  <div class="panel">
+   <h2>كشف الأجور الشهرية</h2>
+   <div class="reporttop no-print">
+    <div class="field"><label for="payMonth">الشهر المطلوب</label><input type="month" id="payMonth" onchange="renderPayroll()"></div>
+    <button class="btn primary" onclick="renderPayroll()">تحديث الحساب</button>
+    <button class="btn" onclick="printSection('payroll')">طباعة كشف الأجور</button>
+    <button class="btn" onclick="exportCSV()">تصدير CSV</button>
+   </div>
+   <div id="payrollTable" class="tablewrap"></div>
+   <div class="panel no-print" style="margin-top:16px;background:#f8f9fc">
+    <h3>طباعة كشف أجرة فردي</h3>
+    <div class="grid">
+     <div class="field"><label for="slipEmployee">اختر الموظف (بالرقم والاسم)</label><select id="slipEmployee"></select></div>
+     <div class="field" style="justify-content:end"><button class="btn primary" onclick="printIndividualSlip()">طباعة كشف هذا الموظف</button></div>
+    </div>
+    <p class="muted">يشمل الكشف تفاصيل الساعات اليومية، والأجر الإجمالي، والتسبيقات، وأقساط السلف، والصافي المستحق للشهر المختار.</p>
+   </div>
+   <div class="notice" style="margin-top:16px">الحساب: مجموع ساعات الشهر × ثمن الساعة، ثم خصم التسبيقات المسجلة في الشهر وأقساط السلف المستحقة. قد يكون الصافي سالبًا إذا تجاوزت الخصومات الأجر، لذا راجع السجل قبل اعتماد الأداء.</div>
+  </div>
+ </section>
+ <section class="panel no-print" style="margin-top:16px">
+  <h2>النسخ الاحتياطي للبيانات</h2>
+  <p class="muted">احتفظ بنسخة من بيانات الموظفين وسجلات الساعات، خصوصًا قبل تغيير الحاسوب أو المتصفح.</p>
+  <div class="actions"><button class="btn" onclick="backupData()">تنزيل نسخة احتياطية</button><label class="btn" for="restoreFile">استرجاع نسخة احتياطية</label><input id="restoreFile" type="file" accept=".json,application/json" style="display:none" onchange="restoreData(event)"></div>
+ </section>
+</div>
+<footer>تطبيق أولي لإدارة ساعات العمل والتسبيقات والسلف والأجور — راجع السجلات قبل اعتماد الأجر النهائي.</footer>
+<script>
+const KEY='pajama_factory_manager_v1';
+let db={employees:[],hours:[],advances:[]};
+const $=id=>document.getElementById(id);
+const today=new Date();
+const dateStr=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const monthStr=d=>dateStr(d).slice(0,7);
+function load(){try{const s=localStorage.getItem(KEY);if(s)db=JSON.parse(s);db.employees=db.employees||[];db.hours=db.hours||[];db.advances=db.advances||[];db.employees.forEach(e=>{if(!e.number)e.number=''})}catch(e){alert('تعذر قراءة البيانات المحفوظة. يمكنك استرجاع نسخة احتياطية.')} }
+function persist(){localStorage.setItem(KEY,JSON.stringify(db));refreshAll()}
+function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function money(n){return Number(n||0).toLocaleString('fr-MA',{minimumFractionDigits:2,maximumFractionDigits:2})+' د.م'}
+function hoursFmt(n){return Number(n||0).toLocaleString('fr-MA',{maximumFractionDigits:2})}
+function emp(id){return db.employees.find(e=>e.id===id)}
+function showTab(id){document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id===id));document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('active',b.dataset.tab===id));if(id==='payroll')renderPayroll();if(id==='hours')renderHours();if(id==='advances')renderAdvances();window.scrollTo({top:0,behavior:'smooth'})}
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
+function saveEmployee(){
+ const id=$('editEmployeeId').value,number=$('empNumber').value.trim(),name=$('empName').value.trim(),job=$('empJob').value.trim(),payType=$('empPayType').value,rate=Number($('empRate').value),monthlySalary=Number($('empMonthlySalary').value);
+ if(!number){alert('يرجى إدخال رقم خاص للموظف.');return}
+ if(db.employees.some(e=>String(e.number||'').trim()===number&&e.id!==id)){alert('رقم الموظف مستخدم بالفعل. أدخل رقمًا مختلفًا.');return}
+ if(!name){alert('يرجى إدخال اسم الموظف.');return}
+ if(payType==='hourly'&&($('empRate').value===''||!Number.isFinite(rate)||rate<0)){alert('يرجى إدخال ثمن ساعة صحيح.');return}
+ if(payType==='monthly'&&($('empMonthlySalary').value===''||!Number.isFinite(monthlySalary)||monthlySalary<0)){alert('يرجى إدخال راتب شهري ثابت صحيح.');return}
+ const data={number,name,job,payType,rate:payType==='hourly'?rate:0,monthlySalary:payType==='monthly'?monthlySalary:0,start:$('empStart').value,status:$('empStatus').value};
+ if(id){const e=emp(id);if(e)Object.assign(e,data)}else db.employees.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),...data});
+ resetEmployeeForm();persist();
+}
+function resetEmployeeForm(){$('editEmployeeId').value='';$('empNumber').value='';$('empName').value='';$('empJob').value='';$('empRate').value='';$('empMonthlySalary').value='';$('empPayType').value='hourly';$('empStart').value=dateStr(today);$('empStatus').value='active';$('employeeFormTitle').textContent='إضافة موظف جديد';toggleSalaryFields()}
+function editEmployee(id){const e=emp(id);if(!e)return;$('editEmployeeId').value=e.id;$('empNumber').value=e.number||'';$('empName').value=e.name;$('empJob').value=e.job||'';$('empPayType').value=e.payType||'hourly';$('empRate').value=e.rate??'';$('empMonthlySalary').value=e.monthlySalary??'';$('empStart').value=e.start||'';$('empStatus').value=e.status||'active';$('employeeFormTitle').textContent='تعديل بيانات الموظف';toggleSalaryFields();window.scrollTo({top:0,behavior:'smooth'})}
+function toggleSalaryFields(){const monthly=$('empPayType').value==='monthly';$('hourlyRateWrap').style.display=monthly?'none':'flex';$('monthlySalaryWrap').style.display=monthly?'flex':'none'}
+function deleteEmployee(id){if(!confirm('هل تريد حذف الموظف؟ ستبقى سجلات ساعات العمل القديمة محفوظة دون اسم مرتبط إذا حُذف الموظف.'))return;db.employees=db.employees.filter(e=>e.id!==id);persist()}
+function renderEmployees(){
+ const q=$('employeeSearch').value.trim().toLowerCase(),list=db.employees.filter(e=>(String(e.number||'')+' '+e.name+' '+(e.job||'')).toLowerCase().includes(q));
+ $('employeesTable').innerHTML=list.length?`<table><thead><tr><th>رقم الموظف</th><th>الاسم</th><th>المهنة</th><th>نظام الأجر</th><th>قيمة الأجر</th><th>بداية العمل</th><th>الحالة</th><th>إجراءات</th></tr></thead><tbody>${list.map(e=>`<tr><td>${esc(e.number||'—')}</td><td>${esc(e.name)}</td><td>${esc(e.job||'—')}</td><td>${(e.payType||'hourly')==='monthly'?'راتب شهري':'بالساعة'}</td><td>${(e.payType||'hourly')==='monthly'?money(e.monthlySalary):money(e.rate)+( '/ساعة')}</td><td>${esc(e.start||'—')}</td><td>${e.status==='inactive'?'متوقف':'نشط'}</td><td><button class="btn small" onclick="editEmployee('${e.id}')">تعديل</button> <button class="btn small danger" onclick="deleteEmployee('${e.id}')">حذف</button></td></tr>`).join('')}</tbody></table>`:'<div class="empty">لا يوجد موظفون بعد. أضف أول موظف من النموذج أعلاه.</div>';
+}
+function updateEmployeeSelects(){
+ const active=db.employees.filter(e=>e.status!=='inactive');
+ const opts=active.map(e=>`<option value="${e.id}">${esc(e.number||'—')}</option>`).join('');
+ const namedOpts=active.map(e=>`<option value="${e.id}">${esc(e.number||'—')} — ${esc(e.name)} — ${(e.payType||'hourly')==='monthly'?money(e.monthlySalary)+'/شهر':money(e.rate)+'/ساعة'}</option>`).join('');
+ const old=$('workEmployee').value,oldf=$('hoursEmployeeFilter').value;
+ $('workEmployee').innerHTML='<option value="">اختر الموظف</option>'+opts;
+ $('hoursEmployeeFilter').innerHTML='<option value="">جميع الموظفين</option>'+db.employees.map(e=>`<option value="${e.id}">${esc(e.number||'—')} — ${esc(e.name)}</option>`).join('');
+ $('advanceEmployee').innerHTML='<option value="">اختر الموظف</option>'+namedOpts;
+ $('advanceEmployeeFilter').innerHTML='<option value="">جميع الموظفين</option>'+db.employees.map(e=>`<option value="${e.id}">${esc(e.number||'—')} — ${esc(e.name)}</option>`).join('');
+ const slipOld=$('slipEmployee')?.value; if($('slipEmployee')) $('slipEmployee').innerHTML='<option value="">اختر الموظف</option>'+db.employees.map(e=>`<option value="${e.id}">${esc(e.number||'—')} — ${esc(e.name)}</option>`).join(''); if(slipOld && db.employees.some(e=>e.id===slipOld)) $('slipEmployee').value=slipOld;
+ if(active.some(e=>e.id===old))$('workEmployee').value=old;
+ if(db.employees.some(e=>e.id===oldf))$('hoursEmployeeFilter').value=oldf;
+}
+function saveHours(){
+ const date=$('workDate').value,id=$('workEmployee').value,hours=Number($('workHours').value),note=$('workNote').value.trim();
+ if(!date||!id){alert('يرجى تحديد التاريخ والموظف.');return}
+ if($('workHours').value===''||!Number.isFinite(hours)||hours<0||hours>24){alert('أدخل عدد ساعات بين 0 و24.');return}
+ const existing=db.hours.find(r=>r.date===date&&r.employeeId===id);
+ if(existing){if(!confirm('يوجد سجل لهذا العامل في هذا التاريخ. هل تريد استبداله؟'))return;existing.hours=hours;existing.note=note}
+ else db.hours.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),date,employeeId:id,hours,note});
+ clearHoursForm(false);persist();
+}
+function clearHoursForm(clearDate=true){if(clearDate)$('workDate').value=dateStr(today);$('workEmployee').value='';$('workHours').value='';$('workNote').value=''}
+function deleteHours(id){if(!confirm('حذف سجل ساعات العمل هذا؟'))return;db.hours=db.hours.filter(r=>r.id!==id);persist()}
+function renderHours(){
+ const m=$('hoursMonth').value,f=$('hoursEmployeeFilter').value;
+ const rows=db.hours.filter(r=>(!m||r.date.startsWith(m))&&(!f||r.employeeId===f)).sort((a,b)=>b.date.localeCompare(a.date));
+ const total=rows.reduce((s,r)=>s+Number(r.hours||0),0);
+ $('hoursTable').innerHTML=rows.length?`<table><thead><tr><th>التاريخ</th><th>الموظف</th><th>الساعات</th><th>ثمن الساعة</th><th>أجر اليوم التقديري</th><th>ملاحظة</th><th class="no-print">إجراء</th></tr></thead><tbody>${rows.map(r=>{const e=emp(r.employeeId),rate=e?e.rate:0;return `<tr><td>${esc(r.date)}</td><td>${esc(e?e.name:'موظف محذوف')}</td><td>${hoursFmt(r.hours)}</td><td>${e&&(e.payType||'hourly')==='monthly'?'راتب شهري':'بالساعة: '+money(rate)}</td><td class="money">${e&&(e.payType||'hourly')==='monthly'?'—':money(r.hours*rate)}</td><td>${esc(r.note||'—')}</td><td class="no-print"><button class="btn small danger" onclick="deleteHours('${r.id}')">حذف</button></td></tr>`}).join('')}<tr><th colspan="2">المجموع</th><th>${hoursFmt(total)} ساعة</th><th></th><th>${money(rows.reduce((s,r)=>s+r.hours*(emp(r.employeeId)?.rate||0),0))}</th><th colspan="2"></th></tr></tbody></table>`:'<div class="empty">لا توجد سجلات في الفترة المحددة.</div>';
+}
+function monthDiff(a,b){const [ay,am]=a.split('-').map(Number),[by,bm]=b.split('-').map(Number);return (by-ay)*12+(bm-am)}
+function deductionsFor(employeeId,month){
+ let advances=0,loans=0;
+ db.advances.filter(a=>a.employeeId===employeeId).forEach(a=>{
+  const am=a.date.slice(0,7),diff=monthDiff(am,month);
+  if(a.type==='advance'){if(am===month)advances+=Number(a.amount||0)}
+  else if(diff>=0){const amount=Number(a.amount||0),install=Number(a.installment||0);if(install>0)loans+=Math.min(install,Math.max(0,amount-install*diff))}
+ });
+ return {advances,loans,total:advances+loans};
+}
+function payrollData(){
+ const m=$('payMonth').value;
+ return db.employees.map(e=>{const rows=db.hours.filter(r=>r.employeeId===e.id&&(!m||r.date.startsWith(m)));const h=rows.reduce((s,r)=>s+Number(r.hours||0),0),wage=(e.payType||'hourly')==='monthly'?Number(e.monthlySalary||0):h*Number(e.rate||0),ded=m?deductionsFor(e.id,m):{advances:0,loans:0,total:0};return {e,h,days:rows.filter(r=>r.hours>0).length,wage,advances:ded.advances,loans:ded.loans,deductions:ded.total,net:wage-ded.total}}).sort((a,b)=>String(a.e.number||'').localeCompare(String(b.e.number||''),'ar',{numeric:true})||a.e.name.localeCompare(b.e.name,'ar'));
+}
+function renderPayroll(){
+ const data=payrollData(),sumH=data.reduce((s,x)=>s+x.h,0),sumW=data.reduce((s,x)=>s+x.wage,0),sumA=data.reduce((s,x)=>s+x.advances,0),sumL=data.reduce((s,x)=>s+x.loans,0),sumD=data.reduce((s,x)=>s+x.deductions,0),sumN=data.reduce((s,x)=>s+x.net,0);
+ $('payrollTable').innerHTML=data.length?`<table><thead><tr><th>رقم الموظف</th><th>اسم الموظف</th><th>أيام عمل</th><th>مجموع الساعات</th><th>نظام الأجر / قيمته</th><th>الأجر الإجمالي</th><th>التسبيقات</th><th>أقساط السلف</th><th>مجموع الخصم</th><th>الصافي المستحق</th><th class="no-print">كشف فردي</th></tr></thead><tbody>${data.map(x=>`<tr><td>${esc(x.e.number||'—')}</td><td>${esc(x.e.name)}</td><td>${x.days}</td><td>${hoursFmt(x.h)}</td><td>${(x.e.payType||'hourly')==='monthly'?'شهري: '+money(x.e.monthlySalary):'بالساعة: '+money(x.e.rate)}</td><td class="money">${money(x.wage)}</td><td>${money(x.advances)}</td><td>${money(x.loans)}</td><td>${money(x.deductions)}</td><td class="money">${money(x.net)}</td><td class="no-print"><button class="btn small" onclick="printIndividualSlip('${x.e.id}')">طباعة</button></td></tr>`).join('')}<tr><th colspan="3">الإجمالي</th><th>${hoursFmt(sumH)} ساعة</th><th></th><th>${money(sumW)}</th><th>${money(sumA)}</th><th>${money(sumL)}</th><th>${money(sumD)}</th><th>${money(sumN)}</th><th class="no-print"></th></tr></tbody></table>`:'<div class="empty">أضف الموظفين أولًا لإعداد كشف الأجور.</div>';
+}
+function loanDeductionsForEmployee(employeeId,month){
+ return db.advances.filter(a=>a.employeeId===employeeId&&a.type==='loan').map(a=>{const start=a.date.slice(0,7),diff=monthDiff(start,month),amount=Number(a.amount||0),install=Number(a.installment||0);const due=diff>=0&&install>0?Math.min(install,Math.max(0,amount-install*diff)):0;return {...a,due,remaining:Math.max(0,amount-install*Math.max(0,diff+1))}}).filter(a=>a.due>0);
+}
+function printIndividualSlip(employeeId){
+ const id=employeeId||$('slipEmployee')?.value;
+ if(!id){alert('يرجى اختيار الموظف أولًا.');return}
+ const e=emp(id);if(!e){alert('لم يتم العثور على الموظف.');return}
+ const month=$('payMonth').value||monthStr(today),rows=db.hours.filter(r=>r.employeeId===id&&r.date.startsWith(month)).sort((a,b)=>a.date.localeCompare(b.date));
+ const totalHours=rows.reduce((sum,r)=>sum+Number(r.hours||0),0),gross=(e.payType||'hourly')==='monthly'?Number(e.monthlySalary||0):totalHours*Number(e.rate||0),ded=deductionsFor(id,month),net=gross-ded.total;
+ const advances=db.advances.filter(a=>a.employeeId===id&&a.type==='advance'&&a.date.startsWith(month)).sort((a,b)=>a.date.localeCompare(b.date));
+ const loans=loanDeductionsForEmployee(id,month);
+ const dayRows=rows.map(r=>`<tr><td>${esc(r.date)}</td><td>${hoursFmt(r.hours)}</td><td>${(e.payType||'hourly')==='monthly'?'—':money(Number(r.hours||0)*Number(e.rate||0))}</td><td>${esc(r.note||'—')}</td></tr>`).join('');
+ const advanceRows=advances.map(a=>`<tr><td>${esc(a.date)}</td><td>تسبيق</td><td>${money(a.amount)}</td><td>${esc(a.note||'—')}</td></tr>`).join('');
+ const loanRows=loans.map(a=>`<tr><td>${esc(a.date)}</td><td>قسط سلفة</td><td>${money(a.due)}</td><td>${esc(a.note||('مبلغ السلفة الأصلي: '+money(a.amount)))}</td></tr>`).join('');
+ const win=window.open('','_blank','width=900,height=750');if(!win){alert('يرجى السماح بالنوافذ المنبثقة لطباعة كشف الأجرة.');return}
+ win.document.write(`<!doctype html><html lang="ar" dir="rtl"><head><meta charset="utf-8"><title>كشف أجرة ${esc(e.number)} - ${esc(month)}</title><style>body{font-family:Tahoma,Arial,sans-serif;color:#172033;margin:28px}h1{text-align:center;font-size:24px;margin-bottom:4px}h2{font-size:17px;margin:24px 0 10px;border-bottom:1px solid #ccc;padding-bottom:7px}.meta,.summary{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px 0}.meta div,.summary div{padding:10px;border:1px solid #ddd;border-radius:8px}.summary .net{font-size:20px;font-weight:bold;background:#f2f7f4}table{width:100%;border-collapse:collapse;margin-top:8px}th,td{border:1px solid #ccc;padding:8px;text-align:right;font-size:12px}th{background:#f1f3f7}.empty{padding:12px;color:#666}.foot{margin-top:30px;display:flex;justify-content:space-between}button{padding:10px 18px;font:inherit}@media print{.no-print{display:none}body{margin:10mm}}</style></head><body>
+ <div class="no-print" style="text-align:left"><button onclick="window.print()">طباعة الكشف</button></div><h1>كشف الأجرة الفردي</h1><div style="text-align:center">الشهر: ${esc(month)}</div>
+ <div class="meta"><div><b>رقم الموظف:</b> ${esc(e.number||'—')}</div><div><b>اسم الموظف:</b> ${esc(e.name)}</div><div><b>المهنة:</b> ${esc(e.job||'—')}</div><div><b>نظام الأجر:</b> ${(e.payType||'hourly')==='monthly'?'راتب شهري ثابت':'بالساعة'}</div><div><b>${(e.payType||'hourly')==='monthly'?'الراتب الشهري الثابت:':'ثمن ساعة العمل:'}</b> ${(e.payType||'hourly')==='monthly'?money(e.monthlySalary):money(e.rate)}</div></div>
+ <h2>تفاصيل ساعات العمل اليومية</h2>${rows.length?`<table><thead><tr><th>التاريخ</th><th>ساعات العمل</th><th>أجر اليوم</th><th>ملاحظة</th></tr></thead><tbody>${dayRows}<tr><th>المجموع</th><th>${hoursFmt(totalHours)} ساعة</th><th>${money(gross)}</th><th></th></tr></tbody></table>`:'<div class="empty">لا توجد ساعات عمل مسجلة لهذا الموظف خلال هذا الشهر.</div>'}
+ <h2>التسبيقات وأقساط السلف المخصومة في هذا الشهر</h2>${advanceRows||loanRows?`<table><thead><tr><th>التاريخ</th><th>النوع</th><th>المبلغ المخصوم</th><th>ملاحظة</th></tr></thead><tbody>${advanceRows}${loanRows}</tbody></table>`:'<div class="empty">لا توجد تسبيقات أو أقساط سلف مستحقة في هذا الشهر.</div>'}
+ <h2>ملخص الأجرة</h2><div class="summary"><div>مجموع ساعات العمل: <b>${hoursFmt(totalHours)} ساعة</b></div><div>الأجر الإجمالي: <b>${money(gross)}</b></div><div>التسبيقات: <b>${money(ded.advances)}</b></div><div>أقساط السلف: <b>${money(ded.loans)}</b></div><div>مجموع الخصومات: <b>${money(ded.total)}</b></div><div class="net">صافي الأجر المستحق: ${money(net)}</div></div>
+ <div class="foot"><span>توقيع المسؤول: __________________</span><span>توقيع الموظف: __________________</span></div><script>window.onload=()=>setTimeout(()=>window.print(),300)<\/script></body></html>`);
+ win.document.close();
+}
+function toggleLoanFields(){$('installmentWrap').style.display=$('advanceType').value==='loan'?'flex':'none'}
+function clearAdvanceForm(){$('advanceDate').value=dateStr(today);$('advanceEmployee').value='';$('advanceType').value='advance';$('advanceAmount').value='';$('advanceInstallment').value='';$('advanceNote').value='';toggleLoanFields()}
+function saveAdvance(){
+ const date=$('advanceDate').value,employeeId=$('advanceEmployee').value,type=$('advanceType').value,amount=Number($('advanceAmount').value),installment=Number($('advanceInstallment').value),note=$('advanceNote').value.trim();
+ if(!date||!employeeId){alert('يرجى تحديد التاريخ والموظف.');return}
+ if($('advanceAmount').value===''||!Number.isFinite(amount)||amount<=0){alert('أدخل مبلغًا صحيحًا أكبر من صفر.');return}
+ if(type==='loan'&&(!$('advanceInstallment').value||!Number.isFinite(installment)||installment<=0)){alert('أدخل قيمة القسط الشهري للسلفة.');return}
+ if(type==='loan'&&installment>amount){if(!confirm('القسط الشهري أكبر من مبلغ السلفة؛ سيقتصر الخصم على الرصيد المتبقي. هل تريد المتابعة؟'))return}
+ db.advances.push({id:crypto.randomUUID?crypto.randomUUID():String(Date.now()+Math.random()),date,employeeId,type,amount,installment:type==='loan'?installment:amount,note});clearAdvanceForm();persist();
+}
+function deleteAdvance(id){if(!confirm('هل تريد حذف هذا السجل؟ سيُعاد احتساب الأجر الشهري.'))return;db.advances=db.advances.filter(a=>a.id!==id);persist()}
+function renderAdvances(){
+ if(!$('advancesTable'))return;
+ const m=$('advanceMonthFilter').value,f=$('advanceEmployeeFilter').value;
+ const rows=db.advances.filter(a=>(!m||a.date.startsWith(m))&&(!f||a.employeeId===f)).sort((a,b)=>b.date.localeCompare(a.date));
+ $('advancesTable').innerHTML=rows.length?`<table><thead><tr><th>التاريخ</th><th>رقم الموظف</th><th>الموظف</th><th>النوع</th><th>المبلغ</th><th>القسط الشهري</th><th>ملاحظة</th><th class="no-print">إجراء</th></tr></thead><tbody>${rows.map(a=>{const e=emp(a.employeeId);return `<tr><td>${esc(a.date)}</td><td>${esc(e?.number||'—')}</td><td>${esc(e?.name||'موظف محذوف')}</td><td>${a.type==='loan'?'سلفة':'تسبيق'}</td><td>${money(a.amount)}</td><td>${a.type==='loan'?money(a.installment):'—'}</td><td>${esc(a.note||'—')}</td><td class="no-print"><button class="btn small danger" onclick="deleteAdvance('${a.id}')">حذف</button></td></tr>`}).join('')}</tbody></table>`:'<div class="empty">لا توجد تسبيقات أو سلف مسجلة في الفترة المحددة.</div>';
+}
+function refreshDashboard(){
+ const m=monthStr(today),hrs=db.hours.filter(r=>r.date.startsWith(m)),totalH=hrs.reduce((s,r)=>s+r.hours,0),wage=hrs.reduce((s,r)=>s+r.hours*(emp(r.employeeId)?.rate||0),0),net=wage-db.employees.reduce((sum,e)=>sum+deductionsFor(e.id,m).total,0);
+ $('statEmployees').textContent=db.employees.filter(e=>e.status!=='inactive').length;
+ $('statHours').textContent=hoursFmt(totalH);
+ $('statWages').textContent=money(net)+' صافي';
+ $('statRecords').textContent=hrs.length;
+ const recent=[...db.hours].sort((a,b)=>b.date.localeCompare(a.date)).slice(0,8);
+ $('recentTable').innerHTML=recent.length?`<div class="tablewrap"><table><thead><tr><th>التاريخ</th><th>الموظف</th><th>الساعات</th><th>الأجر التقديري</th></tr></thead><tbody>${recent.map(r=>`<tr><td>${esc(r.date)}</td><td>${esc(emp(r.employeeId)?.name||'موظف محذوف')}</td><td>${hoursFmt(r.hours)}</td><td>${money(r.hours*(emp(r.employeeId)?.rate||0))}</td></tr>`).join('')}</tbody></table></div>`:'<div class="empty">ستظهر هنا أحدث السجلات بعد إدخالها.</div>';
+}
+function refreshAll(){updateEmployeeSelects();renderEmployees();renderHours();renderAdvances();renderPayroll();refreshDashboard()}
+function printSection(id){showTab(id);window.print()}
+function exportCSV(){
+ const data=payrollData(),m=$('payMonth').value||'كل الفترات';
+ const rows=[['الشهر',m],['رقم الموظف','اسم الموظف','المهنة','نظام الأجر','قيمة الساعة/الراتب الشهري','أيام عمل مسجلة','مجموع الساعات','الأجر الإجمالي','التسبيقات','أقساط السلف','مجموع الخصم','الصافي المستحق']];
+ data.forEach(x=>rows.push([x.e.number||'',x.e.name,x.e.job||'',(x.e.payType||'hourly')==='monthly'?'راتب شهري':'بالساعة',(x.e.payType||'hourly')==='monthly'?x.e.monthlySalary:x.e.rate,x.days,x.h,x.wage,x.advances,x.loans,x.deductions,x.net]));
+ const csv='\uFEFF'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(';')).join('\r\n');
+ const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='كشف-الأجور-'+m+'.csv';a.click();URL.revokeObjectURL(url);
+}
+function backupData(){const blob=new Blob([JSON.stringify(db,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='نسخة-احتياطية-المعمل-'+dateStr(today)+'.json';a.click();URL.revokeObjectURL(url)}
+function restoreData(ev){const file=ev.target.files[0];if(!file)return;const reader=new FileReader();reader.onload=()=>{try{const d=JSON.parse(reader.result);if(!Array.isArray(d.employees)||!Array.isArray(d.hours))throw Error();d.advances=d.advances||[];if(!confirm('سيتم استبدال البيانات الحالية بالنسخة المختارة. هل تريد المتابعة؟'))return;db=d;persist();alert('تم استرجاع البيانات بنجاح.')}catch(e){alert('الملف غير صالح أو ليس نسخة احتياطية لهذا التطبيق.')}finally{$('restoreFile').value=''}};reader.readAsText(file)}
+load();
+$('workDate').value=dateStr(today);$('empStart').value=dateStr(today);toggleSalaryFields();$('hoursMonth').value=monthStr(today);$('payMonth').value=monthStr(today);$('advanceDate').value=dateStr(today);$('advanceMonthFilter').value=monthStr(today);toggleLoanFields();
+refreshAll();
+</script>
 </body>
 </html>
